@@ -1,0 +1,16 @@
+# For C++
+neutron/build/
+neutron/cmake-build-*/
+neutron/CMake-NOTES.md
+.vscode/
+.claude/
+.idea/
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dSYM/
+
+# For rust
+target/
