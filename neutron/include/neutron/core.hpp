@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace neutro {
+namespace neutron {
 
 auto say_hello() -> std::string;
 

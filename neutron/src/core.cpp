@@ -1,7 +1,7 @@
-#include <neutro/core.hpp>
+#include "../include/neutron/core.hpp"
 
-namespace neutro {
+namespace neutron {
 
 auto say_hello() -> std::string { return "neutro"; }
 
-} // namespace neutro
+} // namespace neutron

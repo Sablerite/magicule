@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project: [neutron, proton]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cargo/registry
+            ~/.cargo/git
+            neutron/build
+            proton/target
+          key: ${{ runner.os }}-${{ matrix.project }}-${{ hashFiles('**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.project }}-
+
+      - name: Build and test neutron (C++)
+        if: matrix.project == 'neutron'
+        run: |
+          # Install dependencies
+          sudo apt-get update
+          sudo apt-get install -y cmake make g++
+
+          # Configure and build
+          cd neutron
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
+
+          # Run tests
+          cd build
+          ctest --output-on-failure
+
+      - name: Build and test proton (Rust)
+        if: matrix.project == 'proton'
+        run: |
+          # Install Rust
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source $HOME/.cargo/env
+
+          # Check Rust version
+          rustc --version
+          cargo --version
+
+          # Build and test
+          cd proton
+          cargo check
+          cargo test --verbose

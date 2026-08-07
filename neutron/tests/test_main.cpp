@@ -2,11 +2,11 @@
 #include <iostream>
 #include <string>
 
-#include <neutro/core.hpp>
+#include "../include/neutron/core.hpp"
 
 auto main() -> int {
   // Call the EXACT SAME function that main.cpp uses
-  std::string result = neutro::say_hello();
+  std::string result = neutron::say_hello();
   std::cout << "say_hello returned: " << result << std::endl;
 
   // Assert checks a condition and aborts if false
