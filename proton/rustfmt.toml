@@ -1,0 +1,4 @@
+# Rustfmt configuration for proton project
+# Using default settings
+
+edition = "2021"

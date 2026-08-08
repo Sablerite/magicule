@@ -1,34 +1,44 @@
-use std::io::Write;
+use anyhow::{Context, Result};
+use proton::convert_inches_to_meters;
 
-use std::io;
+use std::io::{self, Write};
 
-fn main() {
+fn main() -> Result<()> {
     let mut input = String::new();
-    let conversion_value: f32 = 39.37;
 
-    'running: loop {
-        // Greeting user
-        println!("-- Conver inches to meters --");
-        print!("Enter inches : ");
-        io::stdout().flush().expect("Unable to flush print!()");
+    println!("-- Convert inches to meters --");
 
-        // Take input from user
+    loop {
+        print!("Enter inches (or 'q' to quit): ");
+        io::stdout().flush().context("Failed to flush stdout")?;
+
+        input.clear();
         io::stdin()
             .read_line(&mut input)
-            .expect("Failed to take input");
+            .context("Failed to read input from stdin")?;
 
-        let number: f32 = match input.trim().parse() {
+        let input = input.trim();
+        if input.eq_ignore_ascii_case("q") {
+            break;
+        }
+
+        let inches: f32 = match input.parse() {
             Ok(num) => num,
             Err(_) => {
-                println!("Error that wasn't a valid number");
-                break 'running;
+                println!("Error: '{}' is not a valid number", input);
+                continue;
             }
         };
 
-        println!(
-            "{} inches is {} meters converted",
-            number,
-            number / conversion_value
-        )
+        match convert_inches_to_meters(inches) {
+            Ok(meters) => {
+                println!("{} inches is {} meters", inches, meters);
+            }
+            Err(e) => {
+                eprintln!("Conversion error: {}", e);
+            }
+        }
     }
+
+    Ok(())
 }
